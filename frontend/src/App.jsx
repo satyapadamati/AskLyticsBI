@@ -2,9 +2,41 @@ import { useState, useEffect, useCallback } from "react";
 import { api } from "./api";
 import Sidebar   from "./components/Sidebar";
 import MainPanel from "./components/MainPanel";
+import Login     from "./components/Login";
 import "./index.css";
 
 export default function App() {
+  const [user, setUser] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("asklyticsbi_user")) || null; }
+    catch { return null; }
+  });
+  const [authChecking, setAuthChecking] = useState(Boolean(localStorage.getItem("asklyticsbi_token")));
+
+  useEffect(() => {
+    if (!localStorage.getItem("asklyticsbi_token")) return;
+    api.me()
+      .then(response => setUser(response.user))
+      .catch(() => {
+        localStorage.removeItem("asklyticsbi_token");
+        localStorage.removeItem("asklyticsbi_user");
+        setUser(null);
+      })
+      .finally(() => setAuthChecking(false));
+  }, []);
+
+  const signOut = async () => {
+    try { await api.logout(); } catch { void 0; }
+    localStorage.removeItem("asklyticsbi_token");
+    localStorage.removeItem("asklyticsbi_user");
+    setUser(null);
+  };
+
+  if (authChecking) return <div className="auth-loading">Loading your workspace...</div>;
+  if (!user) return <Login onAuthenticated={setUser} />;
+  return <WorkspaceApp user={user} onLogout={signOut} />;
+}
+
+function WorkspaceApp({ user, onLogout }) {
   // ── View state ─────────────────────────────────────
   const [view, setView] = useState("chat");
 
@@ -133,9 +165,9 @@ export default function App() {
       width     : "100vw",
       height    : "100vh",
       overflow  : "hidden",
-      background: "#080c18",
+      background: "#081a22",
       fontFamily: "'Inter','Segoe UI',Arial,sans-serif",
-      color     : "#e2e8f0",
+      color     : "#ecfdf5",
     }}>
       <Sidebar
         view             ={view}
@@ -151,6 +183,8 @@ export default function App() {
           setActiveQ("");
         }}
         onClearDashboard ={() => setDashItems([])}
+        user             ={user}
+        onLogout         ={onLogout}
         settings         ={settings}
       />
       <MainPanel
@@ -168,6 +202,7 @@ export default function App() {
         settings         ={settings}
         chatHistory      ={chatHistory}
         queryCount       ={queryCount}
+        user             ={user}
       />
     </div>
   );

@@ -29,6 +29,7 @@ venv/
 env/
 backend/venv/
 backend/.venv/
+.lambda-venv/
 
 # Environment/config secrets
 .env

@@ -1,11 +1,11 @@
 # =============================================================
-# backend/main.py — Gen BI Agent FastAPI Backend
+# backend/main.py — AskLyticsBI FastAPI Backend
 # Complete file with all endpoints
 # =============================================================
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, JSONResponse
 from pydantic import BaseModel
 from typing import Optional, List, Any
 import pandas as pd
@@ -14,15 +14,23 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
-from ai_engine import ask_ai
-from pg_connector import test_connection, run_query, get_table_schema
+if __package__:
+    from .ai_engine import ask_ai
+    from .pg_connector import test_connection, run_query, get_table_schema
+else:
+    from ai_engine import ask_ai
+    from pg_connector import test_connection, run_query, get_table_schema
 from dotenv import load_dotenv
+from auth_service import (
+    init_auth_db, create_user, sign_in, get_user_from_token, logout,
+)
 load_dotenv()
+init_auth_db()
 
 # ──────────────────────────────────────────────────────────
 # APP SETUP
 # ──────────────────────────────────────────────────────────
-app = FastAPI(title="Gen BI Agent API", version="1.0.0")
+app = FastAPI(title="AskLyticsBI API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -31,6 +39,64 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def require_authentication(request: Request, call_next):
+    public_paths = {
+        "/api/auth/login", "/api/auth/register", "/api/auth/logout",
+        "/api/auth/me", "/api/health",
+    }
+    if request.method == "OPTIONS" or request.url.path in public_paths:
+        return await call_next(request)
+    if request.url.path.startswith("/api/"):
+        token = request.headers.get("authorization", "").removeprefix("Bearer ").strip()
+        if not get_user_from_token(token):
+            return JSONResponse(status_code=401, content={"detail": "Authentication required"})
+    return await call_next(request)
+
+
+class AuthRequest(BaseModel):
+    username: str
+    password: str
+
+
+def _require_user(authorization: Optional[str]) -> dict:
+    token = (authorization or "").removeprefix("Bearer ").strip()
+    user = get_user_from_token(token)
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+    return user
+
+
+@app.post("/api/auth/register")
+def register(request: AuthRequest):
+    try:
+        user = create_user(request.username, request.password)
+        session = sign_in(request.username, request.password)
+        return {"token": session["token"], "user": user}
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+
+@app.post("/api/auth/login")
+def login(request: AuthRequest):
+    try:
+        return sign_in(request.username, request.password)
+    except ValueError as exc:
+        raise HTTPException(status_code=401, detail=str(exc))
+
+
+@app.post("/api/auth/logout")
+def auth_logout(authorization: Optional[str] = Header(default=None)):
+    token = (authorization or "").removeprefix("Bearer ").strip()
+    logout(token)
+    return {"ok": True}
+
+
+@app.get("/api/auth/me")
+def auth_me(authorization: Optional[str] = Header(default=None)):
+    return {"user": _require_user(authorization)}
 
 SCH  = os.getenv("PG_SCHEMA", "final")
 TBL  = os.getenv("PG_TABLE",  "company_x_final_table")
@@ -446,7 +512,7 @@ class QueryRequest(BaseModel):
 # ──────────────────────────────────────────────────────────
 @app.get("/")
 def root():
-    return {"status": "Gen BI Agent API is running",
+    return {"status": "AskLyticsBI API is running",
             "version": "1.0.0"}
 
 
@@ -847,7 +913,7 @@ async def export_dashboard_pdf(body: dict):
         story = []
         
         # Title
-        story.append(Paragraph("Gen BI Agent - Dashboard", styles['Title']))
+        story.append(Paragraph("AskLyticsBI - Dashboard", styles['Title']))
         story.append(Spacer(1, 0.2*inch))
         
         # Add each chart
@@ -932,7 +998,7 @@ async def export_dashboard_excel(body: dict):
         hfill = PatternFill("solid", fgColor="243A5E")
         hfont = Font(bold=True, color="FFFFFF", size=13)
         ws_d.merge_cells("A1:Z1")
-        ws_d["A1"]           = "Gen BI Agent — Dashboard"
+        ws_d["A1"]           = "AskLyticsBI — Dashboard"
         ws_d["A1"].font      = hfont
         ws_d["A1"].fill      = hfill
         ws_d["A1"].alignment = Alignment(

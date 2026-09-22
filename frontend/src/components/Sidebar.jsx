@@ -4,6 +4,7 @@ import {
   BookOpen,Bot,Bell,Grid,Settings,
   Snowflake,ChevronDown,ChevronUp,Zap,
   Eye,EyeOff,BarChart2
+  ,LogOut
 } from "lucide-react";
 
 const NAV=[
@@ -21,6 +22,7 @@ export default function Sidebar({
   view,setView,quickQs,onQuestion,
   queryCount,tileCount,
   onClearHistory,onClearDashboard,
+  user,onLogout,
   settings
 }){
   const [fmtOpen,  setFmtOpen]  = useState(false);
@@ -30,15 +32,12 @@ export default function Sidebar({
 
   const S = { // shared styles
     section:{padding:"0 12px",marginBottom:"4px"},
-    label:{fontSize:"10px",color:"#4a5568",
-           textTransform:"uppercase",letterSpacing:"0.07em",
-           padding:"6px 12px 3px",fontWeight:600},
     btn:(active)=>({
       width:"100%",padding:"8px 12px",
-      background:active?"rgba(99,179,237,0.12)":"transparent",
+      background:active?"rgba(184,243,74,0.13)":"transparent",
       border:"none",
-      borderLeft:active?"3px solid #63b3ed":"3px solid transparent",
-      color:active?"#90cdf4":"#718096",
+      borderLeft:active?"3px solid #b8f34a":"3px solid transparent",
+      color:active?"#d7ff8b":"#718096",
       fontSize:"13px",cursor:"pointer",
       display:"flex",alignItems:"center",gap:"10px",
       textAlign:"left",transition:"all 0.15s",
@@ -85,7 +84,7 @@ export default function Sidebar({
       {/* Logo */}
       <div style={{padding:"18px 16px 12px",
                    display:"flex",alignItems:"center",gap:"8px"}}>
-        <Database size={22} color="#63b3ed"/>
+        <Database size={22} color="#f47763"/>
         <span style={{fontSize:"13px",fontWeight:600,color:"#a0aec0"}}>
           PostgreSQL
         </span>
@@ -96,7 +95,7 @@ export default function Sidebar({
         <button
           onClick={()=>{setView("chat");}}
           style={{width:"100%",padding:"8px 12px",
-                  background:"linear-gradient(135deg,#1a4a8a,#2b6cb0)",
+                  background:"linear-gradient(135deg,#0b4544,#0f766e)",
                   border:"none",borderRadius:"8px",color:"white",
                   fontSize:"13px",fontWeight:600,cursor:"pointer",
                   display:"flex",alignItems:"center",
@@ -341,20 +340,25 @@ export default function Sidebar({
                    borderTop:"1px solid #1a2035",
                    display:"flex",alignItems:"center",gap:"8px"}}>
         <div style={{width:"28px",height:"28px",borderRadius:"50%",
-                     background:"linear-gradient(135deg,#1a4a8a,#553c9a)",
+                     background:"linear-gradient(135deg,#0f766e,#f47763)",
                      display:"flex",alignItems:"center",
                      justifyContent:"center",fontSize:"11px",
                      fontWeight:700,color:"white",flexShrink:0}}>
-          PA
+          {(user?.username || "A").slice(0, 2).toUpperCase()}
         </div>
-        <div>
+        <div style={{minWidth:0,flex:1}}>
           <div style={{fontSize:"11px",fontWeight:600,color:"#e2e8f0"}}>
-            Prathyusha Ande
+            {user?.username || "Account"}
           </div>
           <div style={{fontSize:"9px",color:"#718096"}}>
-            ACCOUNTADMIN
+            ASKLYTICSBI USER
           </div>
         </div>
+        <button onClick={onLogout} title="Log out" aria-label="Log out"
+          style={{background:"transparent",border:"none",color:"#94a3b8",
+                  cursor:"pointer",padding:"5px",display:"flex"}}>
+          <LogOut size={15}/>
+        </button>
       </div>
     </div>
   );

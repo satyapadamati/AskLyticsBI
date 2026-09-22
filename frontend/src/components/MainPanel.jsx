@@ -11,7 +11,7 @@ export default function MainPanel(props) {
       flexDirection  : "column",
       overflow       : "hidden",
       // Semi-transparent so background mountains show through
-      background     : "rgba(6,9,20,0.72)",
+      background     : "rgba(8,26,34,0.92)",
       backdropFilter : "blur(6px)",
       WebkitBackdropFilter: "blur(6px)",
       // NO position/zIndex here — parent (App.jsx layer 2) handles it
@@ -35,6 +35,7 @@ export default function MainPanel(props) {
             chatHistory     ={props.chatHistory}
             queryCount      ={props.queryCount}
             activeQ         ={props.activeQ}
+            user            ={props.user}
           />
       }
     </div>

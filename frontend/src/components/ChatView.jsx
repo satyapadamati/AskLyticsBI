@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Send }   from "lucide-react";
 import ResultTabs from "./ResultTabs";
 
@@ -11,7 +11,7 @@ const CHIP_QUESTIONS = [
 
 export default function ChatView({
   result,loading,error,onQuestion,onAddToDashboard,
-  settings,chatHistory,queryCount,activeQ
+  settings,activeQ,user
 }){
   const [input,setInput]=useState("");
   const inputRef=useRef(null);
@@ -41,7 +41,7 @@ export default function ChatView({
         <div>
           <div style={{display:"flex",alignItems:"center",gap:"10px"}}>
             <span style={{fontSize:"20px",fontWeight:700,color:"white"}}>
-              Gen BI Agent
+              AskLyticsBI
             </span>
             <span style={{fontSize:"10px",
               background:"rgba(99,179,237,0.15)",
@@ -80,7 +80,7 @@ export default function ChatView({
           }}>
             <div style={{fontSize:"22px",fontWeight:700,
                          color:"#63b3ed",marginBottom:"6px"}}>
-              Hello Prathyusha! 👋
+              Hello {user?.username || "there"}!
             </div>
             <div style={{fontSize:"17px",color:"white",
                          fontWeight:600,marginBottom:"24px"}}>

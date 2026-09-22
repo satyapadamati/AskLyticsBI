@@ -13,3 +13,29 @@ input::placeholder{color:#374151!important;}
 textarea::placeholder{color:#374151!important;}
 select option{background:#0d1a3a;color:#e2e8f0;}
 @keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+
+:root{
+  --ink:#102a2e;
+  --muted:#6b7d80;
+  --teal:#0ea5a5;
+  --teal-dark:#087477;
+  --coral:#b8f34a;
+  --cream:#f4f8f2;
+}
+.auth-page{
+  min-height:100vh;width:100%;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(420px,.92fr);
+  background:var(--cream);color:var(--ink);overflow:hidden;
+}
+.auth-showcase{position:relative;overflow:hidden;padding:clamp(36px,7vw,100px);background:#102b36;color:#f4fffb;display:flex;flex-direction:column;justify-content:center;isolation:isolate}
+.auth-showcase:before{content:"";position:absolute;width:560px;height:560px;right:-190px;top:-170px;border:1px solid rgba(244,119,99,.45);border-radius:50%;box-shadow:0 0 0 44px rgba(244,119,99,.06),0 0 0 92px rgba(244,119,99,.04);z-index:-1}
+.auth-showcase:after{content:"";position:absolute;width:300px;height:300px;left:-120px;bottom:-130px;background:#f47763;border-radius:50%;opacity:.9;z-index:-1}
+.brand-mark{width:44px;height:44px;border-radius:13px;background:var(--coral);display:grid;place-items:center;color:white;margin-bottom:42px;box-shadow:0 12px 28px rgba(244,119,99,.25)}
+.eyebrow,.auth-kicker{display:flex;align-items:center;gap:7px;color:#b8f34a;text-transform:uppercase;letter-spacing:.12em;font-size:11px;font-weight:700}
+.auth-showcase h1{font-size:clamp(48px,7vw,92px);line-height:.94;letter-spacing:-.04em;margin:16px 0 24px;font-weight:800}
+.showcase-copy{max-width:420px;color:#c0dcda;font-size:18px;line-height:1.6}
+.insight-card{margin-top:70px;width:260px;padding:19px 20px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);backdrop-filter:blur(12px);border-radius:16px;display:grid;gap:7px;box-shadow:0 18px 40px rgba(0,0,0,.12)}
+.insight-card span{color:#b8f34a;font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-weight:700}.insight-card strong{font-size:19px}.insight-card small{color:#c0dcda}
+.showcase-orbit{position:absolute;border:1px solid rgba(255,255,255,.1);border-radius:50%;pointer-events:none}.orbit-one{width:420px;height:420px;right:10%;bottom:-180px}.orbit-two{width:650px;height:650px;right:-10%;bottom:-300px}
+.auth-panel{display:grid;place-items:center;padding:40px 28px;background:#fffaf4}.auth-panel-inner{width:min(100%,390px)}.auth-panel h2{font-size:36px;letter-spacing:-.03em;margin:13px 0 9px;color:var(--ink)}
+.auth-subtitle{color:var(--muted);font-size:14px;margin-bottom:32px}.auth-form{display:grid;gap:19px}.auth-form label{display:grid;gap:8px;color:#345256;font-size:12px;font-weight:700}.field-wrap{display:flex;align-items:center;gap:10px;border:1px solid #d8e3df;background:white;border-radius:11px;padding:0 13px;transition:border-color .2s,box-shadow .2s}.field-wrap:focus-within{border-color:var(--teal);box-shadow:0 0 0 4px rgba(15,118,110,.1)}.field-wrap svg{color:#8aa09e}.field-wrap input{width:100%;border:0;outline:0;background:transparent;padding:14px 0;color:var(--ink);font-size:14px}.password-toggle{border:0;background:transparent;color:#839795;cursor:pointer;display:flex;padding:3px}.auth-submit{border:0;border-radius:11px;background:var(--teal);color:white;padding:14px 17px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;box-shadow:0 9px 18px rgba(15,118,110,.2);transition:transform .2s,background .2s}.auth-submit:hover{background:var(--teal-dark);transform:translateY(-1px)}.auth-submit:disabled{opacity:.6;cursor:wait;transform:none}.auth-error{padding:11px 12px;border-radius:9px;background:#fff0ed;color:#c2412d;font-size:12px}.auth-switch{color:var(--muted);font-size:13px;text-align:center;margin-top:24px}.auth-switch button{border:0;background:transparent;color:var(--teal);font:inherit;font-weight:700;cursor:pointer}.auth-loading{height:100vh;display:grid;place-items:center;background:var(--cream);color:var(--teal);font-size:14px}
+@media(max-width:760px){.auth-page{display:block;overflow:auto}.auth-showcase{min-height:390px;padding:34px 28px;justify-content:flex-start}.auth-showcase h1{font-size:58px}.showcase-copy{font-size:15px}.brand-mark{margin-bottom:28px}.insight-card{margin-top:28px}.auth-panel{padding:44px 24px 60px}.auth-panel h2{font-size:30px}}

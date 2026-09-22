@@ -1,11 +1,16 @@
 // api.js — All calls to your PostgreSQL FastAPI backend
 const BASE = (import.meta.env.VITE_API_BASE || "http://localhost:8000/api").replace(/\/$/, "");
 
+const authHeaders = () => {
+  const token = localStorage.getItem("asklyticsbi_token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
 const get = async (url) => {
-  const r = await fetch(BASE + url);
+  const r = await fetch(BASE + url, { headers: authHeaders() });
   if (!r.ok) {
     let payload = null;
-    try { payload = await r.json(); } catch {}
+    try { payload = await r.json(); } catch { /* Response was not JSON. */ }
     throw payload || { detail: `Request failed: ${r.status}` };
   }
   return r.json();
@@ -14,7 +19,7 @@ const get = async (url) => {
 const post = (url,body) =>
   fetch(BASE+url,{
     method :"POST",
-    headers:{"Content-Type":"application/json"},
+    headers:{"Content-Type":"application/json", ...authHeaders()},
     body   :JSON.stringify(body)
   }).then(r=>{
     if(!r.ok) return r.json().then(e=>{throw e;});
@@ -22,6 +27,11 @@ const post = (url,body) =>
   });
 
 export const api = {
+  login: credentials => post("/auth/login", credentials),
+  register: credentials => post("/auth/register", credentials),
+  me: () => get("/auth/me"),
+  logout: () => post("/auth/logout", {}),
+
   // Health check
   health: () => get("/health"),
 
@@ -76,7 +86,7 @@ export const api = {
   exportChartPdf: (data,chartType,title,showLabels) =>
     fetch(BASE+"/export/chart-pdf",{
       method:"POST",
-      headers:{"Content-Type":"application/json"},
+      headers:{"Content-Type":"application/json", ...authHeaders()},
       body:JSON.stringify({data,chart_type:chartType,
                            title,show_labels:showLabels})
     }).then(r=>r.blob()),
@@ -84,7 +94,7 @@ export const api = {
   exportChartExcel: (data,title) =>
     fetch(BASE+"/export/chart-excel",{
       method:"POST",
-      headers:{"Content-Type":"application/json"},
+      headers:{"Content-Type":"application/json", ...authHeaders()},
       body:JSON.stringify({data,title})
     }).then(r=>r.blob()),
 
@@ -92,14 +102,14 @@ export const api = {
   exportDashPdf: items =>
     fetch(BASE+"/export/dashboard-pdf",{
       method:"POST",
-      headers:{"Content-Type":"application/json"},
+      headers:{"Content-Type":"application/json", ...authHeaders()},
       body:JSON.stringify({items})
     }).then(r=>r.blob()),
 
   exportDashExcel: items =>
     fetch(BASE+"/export/dashboard-excel",{
       method:"POST",
-      headers:{"Content-Type":"application/json"},
+      headers:{"Content-Type":"application/json", ...authHeaders()},
       body:JSON.stringify({items})
     }).then(r=>r.blob()),
 };

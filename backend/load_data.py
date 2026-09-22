@@ -303,7 +303,7 @@ def make_additional_tables(df_trials: pd.DataFrame, df_sites: pd.DataFrame):
     }
 
 print("="*55)
-print("Clinical Gen BI Agent — Data Loader")
+print("AskLyticsBI — Data Loader")
 print("="*55)
 print(f"Data scale factor: {SCALE_FACTOR}x")
 if TARGET_ROWS > 0:
