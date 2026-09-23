@@ -1,6 +1,6 @@
 resource "aws_lb" "backend" {
   name               = "asklyticsbi-${var.environment}-alb"
-  internal           = false
+  internal           = true
   load_balancer_type = "application"
 
   security_groups = [var.security_group_id]

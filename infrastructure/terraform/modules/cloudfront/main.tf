@@ -88,6 +88,6 @@ data "aws_iam_policy_document" "s3_cloudfront" {
 }
 
 resource "aws_s3_bucket_policy" "frontend" {
-  bucket = var.bucket_id
+  bucket = var.bucket_name
   policy = data.aws_iam_policy_document.s3_cloudfront.json
 }

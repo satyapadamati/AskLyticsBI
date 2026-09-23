@@ -8,7 +8,7 @@ variable "vpc_cidr" {
   type        = string
 }
 variable "environment" {
-  description = "The environment for which resources are being provisioned."
+  description = "The environment for which resources are being provisioned"
   type        = string
 }
 variable "privatesubnet_a_cidr" {

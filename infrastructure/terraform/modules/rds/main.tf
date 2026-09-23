@@ -9,8 +9,8 @@ resource "aws_db_subnet_group" "this" {
 resource "aws_db_instance" "this" {
   identifier         = "${var.environment}-db-instance"
   engine             = "postgres"
-  engine_version     = "17.4"
-  backup_retention_period = 7
+  engine_version     = "18.3"
+  backup_retention_period = 0
   skip_final_snapshot     = true
   instance_class     = "db.t3.micro"
   allocated_storage  = 20

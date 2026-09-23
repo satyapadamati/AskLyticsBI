@@ -45,8 +45,10 @@ module "cloudfront" {
 
   environment = var.environment
 
-  bucket_id  = module.s3.s3_bucket_domain_name
-  bucket_arn = module.s3.s3_bucket_arn
+
+  bucket_id   = module.s3.s3_bucket_domain_name
+  bucket_name = module.s3.s3_bucket_name
+  bucket_arn  = module.s3.s3_bucket_arn
 }
 
 

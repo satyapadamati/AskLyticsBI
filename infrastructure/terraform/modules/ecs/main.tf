@@ -1,5 +1,5 @@
 resource "aws_ecs_cluster" "this" {
-  name = "AskLyticsBI-${var.environment}"
+  name = "asklytics-backend-ecs"
   tags = {
     Environment = var.environment
   }
@@ -97,7 +97,7 @@ resource "aws_ecs_task_definition" "backend" {
 }
 
 resource "aws_ecs_service" "backend" {
-  name            = "asklyticsbi-${var.environment}-backend"
+  name            = "asklytics-backend-Service"
   cluster         = aws_ecs_cluster.this.id
   task_definition = aws_ecs_task_definition.backend.arn
 
@@ -117,7 +117,7 @@ resource "aws_ecs_service" "backend" {
   }
 
   tags = {
-    Name        = "asklyticsbi-${var.environment}-backend-service"
+    Name        = "asklytics-backend-Service"
     Environment = var.environment
     Project     = "AskLyticsBI"
   }
