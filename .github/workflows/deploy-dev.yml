@@ -12,8 +12,8 @@ permissions:
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: asklytics-backend
-  ECS_CLUSTER: askLyticsBI-ECS
-  ECS_SERVICE: askLyticsBI-Service
+  ECS_CLUSTER: asklytics-backend-ecs
+  ECS_SERVICE: asklytics-backend-Service
 
 jobs:
   deploy:
