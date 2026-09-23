@@ -23,6 +23,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # --------------------------------------------------
+      # Check GitHub OIDC environment
+      # --------------------------------------------------
       - name: Check GitHub OIDC environment
         run: |
           echo "Repository: $GITHUB_REPOSITORY"
@@ -41,26 +44,69 @@ jobs:
           fi
 
           echo "OIDC environment is available"
-      
+
+      # --------------------------------------------------
+      # Debug actual GitHub OIDC claims
+      # --------------------------------------------------
+      - name: Debug OIDC claims
+        run: |
+          TOKEN=$(curl -s \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com" \
+            | jq -r '.value')
+
+          if [ -z "$TOKEN" ] || [ "$TOKEN" = "null" ]; then
+            echo "Failed to obtain OIDC token"
+            exit 1
+          fi
+
+          PAYLOAD=$(echo "$TOKEN" | cut -d '.' -f2)
+
+          case $((${#PAYLOAD} % 4)) in
+            2) PAYLOAD="${PAYLOAD}==" ;;
+            3) PAYLOAD="${PAYLOAD}=" ;;
+          esac
+
+          echo "OIDC claims:"
+          echo "$PAYLOAD" \
+            | tr '_-' '/+' \
+            | base64 -d 2>/dev/null \
+            | jq '{sub, aud, iss}'
+
+      # --------------------------------------------------
+      # Assume AWS IAM role using OIDC
+      # --------------------------------------------------
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
+      # --------------------------------------------------
+      # Verify AWS authentication
+      # --------------------------------------------------
       - name: Verify AWS identity
         run: |
           aws sts get-caller-identity
 
+      # --------------------------------------------------
+      # Login to ECR
+      # --------------------------------------------------
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
+      # --------------------------------------------------
+      # Build backend Docker image
+      # --------------------------------------------------
       - name: Build Docker image
         run: |
           docker build \
             -t $ECR_REPOSITORY:${GITHUB_SHA} \
             ./backend
 
+      # --------------------------------------------------
+      # Tag image
+      # --------------------------------------------------
       - name: Tag Docker image
         run: |
           ACCOUNT_ID=$(aws sts get-caller-identity \
@@ -75,10 +121,16 @@ jobs:
 
           echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
 
+      # --------------------------------------------------
+      # Push image to ECR
+      # --------------------------------------------------
       - name: Push image to ECR
         run: |
           docker push $IMAGE_URI
 
+      # --------------------------------------------------
+      # Deploy ECS
+      # --------------------------------------------------
       - name: Deploy ECS
         run: |
           aws ecs update-service \
@@ -86,6 +138,9 @@ jobs:
             --service "$ECS_SERVICE" \
             --force-new-deployment
 
+      # --------------------------------------------------
+      # Wait for ECS deployment
+      # --------------------------------------------------
       - name: Wait for ECS deployment
         run: |
           aws ecs wait services-stable \
