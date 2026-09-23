@@ -12,7 +12,8 @@ RUN apt-get update \
 
 COPY requirements-ecs.txt requirements.txt
 RUN pip install --upgrade pip \
-    && pip install -r requirements.txt
+    && pip install --no-cache-dir --no-compile -r requirements.txt \
+    && rm -rf /root/.cache /tmp/*
 
 COPY . .
 
