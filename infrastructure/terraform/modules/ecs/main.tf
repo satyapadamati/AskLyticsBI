@@ -104,6 +104,9 @@ resource "aws_ecs_service" "backend" {
   desired_count = 1
   launch_type   = "FARGATE"
 
+  # Startup runs init_auth_db() against RDS before uvicorn listens
+  health_check_grace_period_seconds = 60
+
   network_configuration {
     subnets          = var.subnet_ids
     security_groups  = [var.security_group_id]
