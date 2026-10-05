@@ -9,16 +9,16 @@ resource "aws_cloudfront_distribution" "frontend" {
   enabled             = true
   default_root_object = "index.html"
   custom_error_response {
-  error_code         = 403
-  response_code      = 200
-  response_page_path = "/index.html"
-}
+    error_code         = 403
+    response_code      = 200
+    response_page_path = "/index.html"
+  }
 
-custom_error_response {
-  error_code         = 404
-  response_code      = 200
-  response_page_path = "/index.html"
-}
+  custom_error_response {
+    error_code         = 404
+    response_code      = 200
+    response_page_path = "/index.html"
+  }
 
   origin {
     domain_name              = var.bucket_id

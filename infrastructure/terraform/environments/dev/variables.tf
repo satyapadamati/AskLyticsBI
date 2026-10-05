@@ -27,6 +27,14 @@ variable "availability_zone_b" {
   description = "Availability zone for the private subnet B in the development environment."
   type        = string
 }
+variable "publicsubnet_a_cidr" {
+  description = "CIDR block for the public subnet A in the development environment."
+  type        = string
+}
+variable "publicsubnet_b_cidr" {
+  description = "CIDR block for the public subnet B in the development environment."
+  type        = string
+}
 variable "db_name" {
   description = "The name of the RDS database in the development environment."
   type        = string

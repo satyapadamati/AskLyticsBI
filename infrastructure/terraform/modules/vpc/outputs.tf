@@ -14,3 +14,15 @@ output "aws_private_route_table_id" {
   description = "The ID of the private route table created by this module."
   value       = aws_route_table.private.id
 }
+output "aws_public_subnet_a_id" {
+  description = "The ID of the public subnet A created by this module."
+  value       = aws_subnet.public-sub-a.id
+}
+output "aws_public_subnet_b_id" {
+  description = "The ID of the public subnet B created by this module."
+  value       = aws_subnet.public-sub-b.id
+}
+output "nat_gateway_id" {
+  description = "The ID of the NAT Gateway created by this module."
+  value       = aws_nat_gateway.this.id
+}

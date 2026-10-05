@@ -5,12 +5,12 @@ variable "environment" {
 
 variable "ecr_repository_url" {
   description = "The URL of the ECR repository for the ECS backend container."
-  type = string
+  type        = string
 }
 
 variable "aws_region" {
   description = "The AWS region in which the ECS resources are being provisioned."
-  type = string
+  type        = string
 }
 variable "subnet_ids" {
   description = "The list of subnet IDs for the ECS tasks."

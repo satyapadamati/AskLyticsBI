@@ -9,6 +9,9 @@ module "vpc" {
   privatesubnet_b_cidr = var.privatesubnet_b_cidr
   availability_zone_a  = var.availability_zone_a
   availability_zone_b  = var.availability_zone_b
+  publicsubnet_a_cidr  = var.publicsubnet_a_cidr
+  publicsubnet_b_cidr  = var.publicsubnet_b_cidr
+  aws_region           = var.aws_region
 }
 module "security_groups" {
   source      = "../../modules/security-groups"

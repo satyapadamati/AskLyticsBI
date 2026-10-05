@@ -64,6 +64,22 @@ resource "aws_vpc_security_group_egress_rule" "ecs_to_rds" {
   description = "Allow ECS tasks to connect to PostgreSQL"
 }
 
+
+# ============================================================
+# ECS → Internet HTTPS (ECR, CloudWatch Logs, S3, Groq API)
+# ============================================================
+
+resource "aws_vpc_security_group_egress_rule" "ecs_https_out" {
+  security_group_id = aws_security_group.ecs.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 443
+  to_port     = 443
+  ip_protocol = "tcp"
+
+  description = "Allow ECS tasks HTTPS egress"
+}
+
 # ============================================================
 # ALB Security Group
 # ============================================================

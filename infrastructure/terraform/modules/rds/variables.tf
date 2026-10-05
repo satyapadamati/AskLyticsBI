@@ -5,11 +5,11 @@ variable "environment" {
 variable "vpc_id" {
   description = "The ID of the VPC in which the RDS resources will be provisioned."
   type        = string
-}   
+}
 variable "subnet_ids" {
   description = "The IDs of the subnets in which the RDS resources will be provisioned."
   type        = list(string)
-}   
+}
 variable "security_group_ids" {
   description = "The IDs of the security groups to associate with the RDS resources."
   type        = list(string)

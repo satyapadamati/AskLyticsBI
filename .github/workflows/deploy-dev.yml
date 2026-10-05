@@ -113,13 +113,20 @@ jobs:
             --query Account \
             --output text)
 
-          IMAGE_URI=${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${GITHUB_SHA}
+          ECR_URI=${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}
+          IMAGE_URI=${ECR_URI}:${GITHUB_SHA}
+          LATEST_URI=${ECR_URI}:latest
 
           docker tag \
             $ECR_REPOSITORY:${GITHUB_SHA} \
             $IMAGE_URI
 
+          docker tag \
+            $ECR_REPOSITORY:${GITHUB_SHA} \
+            $LATEST_URI
+
           echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
+          echo "LATEST_URI=$LATEST_URI" >> $GITHUB_ENV
 
       # --------------------------------------------------
       # Push image to ECR
@@ -127,6 +134,7 @@ jobs:
       - name: Push image to ECR
         run: |
           docker push $IMAGE_URI
+          docker push $LATEST_URI
 
       # --------------------------------------------------
       # Deploy ECS
